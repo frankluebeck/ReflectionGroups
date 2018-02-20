@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE Book SYSTEM "gapdoc.dtd"
+   [ <!ENTITY RefGrp "<Package>ReflectionGroups</Package>">
+     <!ENTITY CHEVIE "<Package>CHEVIE</Package>">
+   ]>
+
+<!-- Documentation of the ReflectionGroups package. 
+     Copyright 2018- by Frank Lübeck
+     Lehrstuhl D für Mathematik, RWTH Aachen, Germany -->
+     
+<Book Name="ReflectionGroups"> 
+
+<TitlePage>
+  <Title>&RefGrp;</Title>
+  <Version>( Version 
+<#Include SYSTEM "../VERSION">
+ )
+  </Version>
+  <Date>February 2018</Date>
+  <Author> Frank Lübeck 
+    <Email>Frank.Luebeck@Math.RWTH-Aachen.De</Email>
+    <Homepage>http://www.math.rwth-aachen.de/~Frank.Luebeck</Homepage>
+  </Author>
+  <Copyright> &copyright; 2018- by Frank Lübeck <P/>
+<!-- We adopt the copyright regulations of &GAP; as detailed in the 
+     copyright notice in the &GAP; Reference Manual. -->
+    This package may be distributed under the terms and conditions of the
+    GNU Public License Version 3 or later,
+    see <URL>http://www.gnu.org/licenses</URL>.
+  </Copyright>
+</TitlePage>
+
+<TableOfContents/>
+
+<Body>
+
+<#Include SYSTEM "Intro.xml">
+
+</Body>
+
+<Bibliography Databases="RefGrpBib.xml" />
+
+<TheIndex/>
+
+</Book>
+
