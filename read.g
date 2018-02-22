@@ -4,4 +4,5 @@
 ##  
 ##  Reading implementations.
 
-##  ReadPackage( "ReflectionGroups", "lib/.gi");
+ReadPackage( "ReflectionGroups", "lib/Utils.gi");
+ReadPackage( "ReflectionGroups", "lib/GenRefl.gi");

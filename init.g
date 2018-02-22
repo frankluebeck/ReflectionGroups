@@ -4,4 +4,5 @@
 ##  
 ##  Reading declarations
 
-##  ReadPackage( "ReflectionGroups", "lib/.gd");
+ReadPackage( "ReflectionGroups", "lib/Utils.gd");
+ReadPackage( "ReflectionGroups", "lib/GenRefl.gd");
