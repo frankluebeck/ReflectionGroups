@@ -17,6 +17,8 @@
 /doc/*.six
 /doc/*.tex
 /doc/*.toc
+/doc/*.xml.bib
 /doc/manual.pdf
+/a.g
 *~
 
