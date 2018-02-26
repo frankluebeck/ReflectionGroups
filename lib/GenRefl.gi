@@ -91,22 +91,20 @@ end);
 ##  <Returns>a reflection (over-)group</Returns>
 ##  <Description>
 ##  
-##  Each reflection group  <A>W</A> in &RefGrp; has a  reflection parent. If
-##  not set otherwise (e.g., in <Ref Oper="ReflectionSubgroupByPositions"/>)
-##  a group is  its own reflection parent. The &RefGrp;  programs try to use
-##  additional structures (root system, reflection representation, ...) of a
-##  parent group for reflection subgroups as well.
+##  Each reflection subgroup  <A>W</A> in &RefGrp; has  a reflection parent.
+##  The  &RefGrp; programs  try  to induce  information  about a  reflection
+##  subgroup as much as possible from its reflection parent.
 ##  
 ##  <Example>
 ##  gap> s5 := Group((1,2,3,4,5),(1,2,3,4));;   
 ##  gap> W := Subgroup(s5, [(1,2,3,4),(2,3,4)]);;
 ##  gap> Setter(GeneratingReflections)(W, [(1,2),(2,3),(3,4)]);
-##  gap> Parent(W) = s5; ReflectionParent(W) = W;
+##  gap> Parent(W) = s5; HasReflectionParent(W);
 ##  true
-##  true
+##  false
 ##  gap> U := ReflectionSubgroupByLabels(W, [2, 3]);;
 ##  gap> U2 := ReflectionSubgroupByLabels(U, [3]);;
-##  gap> Parent(U2) = U; ReflectionParent(U2) = W;
+##  gap> Parent(U2) = U; ReflectionParent(U2) = U;
 ##  true
 ##  true
 ##  gap> GeneratingReflections(U2);
@@ -116,8 +114,6 @@ end);
 ##  </ManSection>
 ##  <#/GAPDoc>
 ##  
-## ReflectionParent: by default the group itself
-InstallMethod(ReflectionParent, ["CanGeneratingReflections"], IdFunc);
 
 ###########################################################################
 ##  
@@ -208,36 +204,47 @@ end);
 InstallMethod(LabelsGeneratingReflections, ["CanGeneratingReflections"],
 function(G)
   local P, incl;
-  if Tester(LabelsReflections)(G) then
-    return LabelsReflections(G){[1..NrGeneratingReflections(G)]};
+  return [1..NrGeneratingReflections(G)];
+end);
+InstallMethod(LabelsGeneratingReflections, ["HasReflectionParent"],
+function(G)
+  local P, incl;
+  P := ReflectionParent(G);
+  incl := GeneratingReflectionsInclusion(G);
+  if IsSubset([1..NrGeneratingReflections(P)], incl) then
+    return LabelsGeneratingReflections(P){incl};
   else
-    P := ReflectionParent(G);
-    if IsIdenticalObj(P, G) then
-      return [1..NrGeneratingReflections(G)];
-    fi;
-    incl := GeneratingReflectionsInclusion(G);
-    if IsSubset([1..NrGeneratingReflections(G)], incl) then
-      return LabelsGeneratingReflections(P){incl};
-    else
-      return LabelsReflections(P){incl};
-    fi;
+    return LabelsReflections(P){incl};
   fi;
 end);
+
 InstallMethod(LabelsReflections, ["CanGeneratingReflections"],
 function(G)
-  local P, res;
-  P := ReflectionParent(G);
-  if IsIdenticalObj(P, G) then
-    res := ReflectionsInclusion(G);
-  else
-    res := LabelsReflections(P){ReflectionsInclusion(G)};
-  fi;
+  local res, nr;
+  res := [1..Length(Reflections(G))];
+  nr := NrGeneratingReflections(G);
   if Tester(LabelsGeneratingReflections)(G) then
-    res := ShallowCopy(res);
-    res{[1..NrGeneratingReflections(G)]} := LabelsGeneratingReflections(G);
+    res{[1..nr]} := LabelsGeneratingReflections(G);
+  else
+    Setter(LabelsGeneratingReflections)(G, [1..nr]);
   fi;
   return res;
 end);
+InstallMethod(LabelsReflections, ["HasReflectionParent"],
+function(G)
+  local P, res, nr;
+  P := ReflectionParent(G);
+  res := LabelsReflections(P){ReflectionsInclusion(G)};
+  nr := NrGeneratingReflections(G);
+  if Tester(LabelsGeneratingReflections)(G) then
+    res{[1..nr]} := LabelsGeneratingReflections(G);
+  else
+    Setter(LabelsGeneratingReflections)(G, res{[1..nr]});
+  fi;
+  return res;
+end);
+
+
 
 ###########################################################################
 ##  
@@ -319,9 +326,9 @@ end);
 ##  Attr="LabelsReflections"/>. And  for the third the  argument <A>elts</A>
 ##  must be a list of elements of <A>W</A> which are reflections.<P/>
 ##  
-##  Any   reflection    group   in   &RefGrp;   has    an   attribute   <Ref
-##  Attr="ReflectionParent"/>;  for a  reflection subgroup  this equals  the
-##  <C>ReflectionParent(<A>W</A>)</C>. <P/>
+##  A   reflection   subgroup   in    &RefGrp;   has   an   attribute   <Ref
+##  Attr="ReflectionParent"/>;  which stores  the  reflection  group it  was
+##  generated from. <P/>
 ##  
 ##  A  reflection   subgroup  can  be   asked  for  the  embedding   of  its
 ##  reflections   into   those   of   the  reflection   parent,   see   <Ref
@@ -377,7 +384,7 @@ InstallGlobalFunction(ReflectionSubgroupBasic, function(G, l)
   # here the 'NC' is important in case of infinite groups
   res := SubgroupNC(G, genr);
   SetGeneratingReflections(res, genr);
-  SetReflectionParent(res, ReflectionParent(G));
+  SetReflectionParent(res, G);
   SetGeneratingReflectionsInclusion(res, gincl);
   return res;
 end);
@@ -400,10 +407,11 @@ InstallMethod(ReflectionSubgroupByPositions,
 ##  <Returns>lists of positions</Returns>
 ##  <Description>
 ##  
-##  Let <A>W</A> be  a reflection group and <C>G</C>  its reflection parent,
-##  see  <Ref Attr="ReflectionParent"/>.  Furthermore, let  <C>reflW</C> and
-##  <C>reflG</C>  be the  lists of  reflections <C>Reflections(<A>W</A>)</C>
-##  and <C>Reflections(G)</C>, respectively. <P/>
+##  Let   <A>W</A>    be   a   reflection   subgroup    and   <C>G</C>   its
+##  reflection  parent,  see  <Ref  Attr="ReflectionParent"/>.  Furthermore,
+##  let  <C>reflW</C>   and  <C>reflG</C>   be  the  lists   of  reflections
+##  <C>Reflections(<A>W</A>)</C>  and  <C>Reflections(G)</C>,  respectively.
+##  <P/>
 ##  
 ##  Then    <C>ReflectionsInclusion(<A>W</A>)</C>    is   a    list    which
 ##  contains    in     position    <C>i</C>    the    position     of    the
@@ -416,7 +424,10 @@ InstallMethod(ReflectionSubgroupByPositions,
 ##  The  list returned  by  <C>ReflectionsRestriction(W)</C>  is unbound  in
 ##  position  <C>i</C> if  the <C>i</C>-th  element of  <C>reflG</C> is  not
 ##  contained in <C>reflW</C>. Otherwise it is bound to the position of this
-##  element in <C>reflW</C>.
+##  element in <C>reflW</C>.<P/>
+##  
+##  If  <A>W</A> has  no  reflection  parent then  <A>W</A>  itself is  used
+##  instead.
 ##  
 ##  <Example>
 ##  gap> W := ReflectionGroup([(1,2), (2,3), (3,4)]);; Reflections(W);
@@ -435,50 +446,46 @@ InstallMethod(ReflectionSubgroupByPositions,
 ##  <#/GAPDoc>
 ##  
 ##  avoid to compute all reflections if only generating ones are needed
-InstallMethod(GeneratingReflectionsInclusion, ["CanGeneratingReflections"],
+InstallMethod(GeneratingReflectionsInclusion, ["HasReflectionParent"],
 function(G)
   local   rp,  gen,  rpgen,  rpp;
   rp := ReflectionParent(G);
   gen := GeneratingReflections(G);
   rpgen := GeneratingReflections(rp);
-  if IsIdenticalObj(G, rp) then
-    return [1..NrGeneratingReflections(G)];
-  elif IsSubset(rpgen, gen) then
-    rpp := [1..NrGeneratingReflections(rp)];
-    return rpp{List(gen, x-> Position(rpgen, x))};
+  if IsSubset(rpgen, gen) then
+    return List(gen, x-> Position(rpgen, x));
   else
     return ReflectionsInclusion(G){[1..NrGeneratingReflections(G)]};
   fi;
 end);
+# groups without parent are considered as their own parent
+InstallMethod(GeneratingReflectionsInclusion, ["CanGeneratingReflections"],
+G-> [1..NrGeneratingReflections(G)]  );
 
 ##  positions of all reflections in list of reflections of parent
-InstallMethod(ReflectionsInclusion, ["CanGeneratingReflections"],
+InstallMethod(ReflectionsInclusion, ["HasReflectionParent"],
 function(G)
   local   refs;
-  if IsIdenticalObj(G, ReflectionParent(G)) then
-    return [1..Length(Reflections(G))];
-  else
-    refs := Reflections(ReflectionParent(G));
-    return List(Reflections(G), r-> Position(refs, r));
-  fi;
+  refs := Reflections(ReflectionParent(G));
+  return List(Reflections(G), r-> Position(refs, r));
 end);
+InstallMethod(ReflectionsInclusion, ["CanGeneratingReflections"],
+G-> [1..Length(Reflections(G))]  );
 
 ##  positions of all reflections of parent in list of reflections
 ##  (position unbound if not in subgroup)
-InstallMethod(ReflectionsRestriction, ["CanGeneratingReflections"],
-        function(G)
-  local   inc,  res,  i;
-  if IsIdenticalObj(G, ReflectionParent(G)) then
-    return ReflectionsInclusion(G);
-  else
-    inc := ReflectionsInclusion(G);
-    res := [];
-    for i in [1..Length(inc)] do
-      res[inc[i]] := i;
-    od;
-    return res;
-  fi;
+InstallMethod(ReflectionsRestriction, ["HasReflectionParent"],
+function(G)
+  local inc, res, i;
+  inc := ReflectionsInclusion(G);
+  res := [];
+  for i in [1..Length(inc)] do
+    res[inc[i]] := i;
+  od;
+  return res;
 end);
+InstallMethod(ReflectionsRestriction, ["CanGeneratingReflections"],
+G-> ReflectionsInclusion(G));
 
 ##  generic `ReflectionSubgroup' by labels instead of positions:
 InstallMethod(ReflectionSubgroupByLabels,

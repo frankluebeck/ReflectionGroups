@@ -48,6 +48,7 @@ DeclareAttribute("Reflections", CanGeneratingReflections);
 DeclareAttribute("LabelsGeneratingReflections", CanGeneratingReflections);
 DeclareAttribute("LabelsReflections", CanGeneratingReflections);
 DeclareAttribute("ReflectionParent", CanGeneratingReflections);
+InstallTrueMethod(CanGeneratingReflections, HasReflectionParent);
 DeclareAttribute("GeneratingReflectionsInclusion", CanGeneratingReflections);
 DeclareAttribute("ReflectionsInclusion", CanGeneratingReflections);
 DeclareAttribute("ReflectionsRestriction", CanGeneratingReflections);
