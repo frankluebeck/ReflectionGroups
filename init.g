@@ -6,3 +6,4 @@
 
 ReadPackage( "ReflectionGroups", "lib/Utils.gd");
 ReadPackage( "ReflectionGroups", "lib/GenRefl.gd");
+ReadPackage( "ReflectionGroups", "lib/GenRoot.gd");

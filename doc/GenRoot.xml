@@ -1,0 +1,152 @@
+
+<!-- $Id: GenRoot.xml 15 2001-08-13 22:56:25Z chevie $ -->
+
+<Chapter Label="ch:GenRoot">
+<Heading>Reflection Groups with Roots</Heading>
+
+In this  chapter we first  show how a reflection  can be described  by a
+<E>root</E>  and a  <E>coroot</E>. A  reflection group  <M>W</M> in  the
+&RefGrp; package  which has the attribute  <Ref Attr="GeneratingRoots"/>
+allows  to   define  an  isomorphism   between  <M>W</M>  and   a  group
+generated  by  matrices  which  are   actual  reflections  of  a  finite
+dimensional complex vector space. This is explained in Section&nbsp;<Ref
+Sect="sec:GenRoot"/>   and  Section&nbsp;<Ref   Sect="sec:GenRootFunc"/>
+describes  the  basic functions  available  for  groups with  generating
+roots.<P/>
+
+A  reflection  group  with  generating  roots and  a  finite  number  of
+reflections  (and  roots)  is  often  represented  as  a  <E>permutation
+group</E>,  an  element  is  described by  the  permutation  it  induces
+on  the  set  of  all  roots. This  allows  to  apply  &GAP;'s  powerful
+functionality  for  general  permutation groups.  See  Section&nbsp;<Ref
+Sect="PermRoot"/><P/>
+
+In Section&nbsp;<Ref Sect="sec:RootSystem"/> we will define particularly
+nice sets of  roots called <E>root systems</E>.  The isomorphism classes
+of  the  corresponding  (real)   reflection  groups  coincide  with  the
+isomorphism classes of finite <E>Coxeter groups</E>. <P/>
+
+For  groups  with  a  set  of  generating  roots  which  are  a  set  of
+<E>simple  roots</E>  of  a  root  system  there  are  many  interesting
+functions.  For  example:  The  isomorphism   type  with  respect  to  a
+classification  of these  groups can  be determined  and this  allows to
+use  data  collections to  recover  information  about the  group  (like
+parameterization  and representatives  for the  conjugacy classes),  see
+Chapter&nbsp;<Ref Chap="ch:ReflType"/>  for more  details. Or,  when the
+group  allows to  construct for  each element  the corresponding  matrix
+in  the  reflection  representation,   one  can  efficiently  write  the
+element  as  a  shortest  possible product  of  generating  reflections,
+i.e.,  the  word problem  is  solved  for  these  groups. This  and  its
+interesting  combinatorial  and  geometric  consequences  are  explained
+in  Chapter&nbsp;<Ref Chap="LeftDesc"/>  (in  a  slightly more  abstract
+setting). Finally,  we mention  here that  reflection subgroups  in this
+case  have also  a  canonical  set of  simple  roots with  corresponding
+generating reflections, this can be computed from an arbitrary subset of
+roots or reflections.<P/>
+
+<Section Label="sec:GenRoot">
+<Heading>Reflection Groups with Generating Roots</Heading>
+
+<Subsection Label="ss:ReflRootCoroot">
+<Heading>Reflections, Roots and Coroots</Heading>
+
+Let <M>V</M>  be a  finite dimensional vector  space over  some subfield
+<M>K</M>  of  the  complex  numbers  and <M>s</M>  be  a  reflection  on
+<M>V</M>,  i.e.,  an  automorphism  of finite  order  with  exactly  one
+eigenvalue  <M>\zeta</M>  which  is  (a  root of  unity)  not  equal  to
+<M>1</M>. <P/>
+
+An  eigenvector  <M>r</M>  with  eigenvalue  <M>\zeta</M>  is  called  a
+<E>root</E> of the reflection <M>s</M>.  The eigenspace <M>H</M> for the
+eigenvalue  <M>1</M>  is  called  the  <E>reflecting  hyperplane</E>  of
+<M>s</M>. Then <M>s: V \rightarrow V</M> can be written in the form <M>x
+\mapsto x  - r^\vee(x) r</M>,  where <M>r^\vee</M>  is a linear  form on
+<M>V</M>,  i.e.,  an  element  of the  dual  space  <M>V^\vee</M>.  This
+<M>r^\vee</M> is called the  <E>coroot</E> corresponding to <M>r</M> and
+we have <M>r^\vee(r) = 1 - \zeta</M>.<P/>
+
+Vice  versa, fixing  an  <M>r \in  V</M>, a  non-trivial  root of  unity
+<M>\zeta</M> and  a linear  form <M>r^\vee</M> with  <M>r^\vee(r) =  1 -
+\zeta</M>, the above formula defines  a reflection <M>s</M> on <M>V</M>.
+<P/>
+
+Fixing   a    basis   of   <M>V</M>   and    considering   <M>V</M>   as
+euclidean/hermitian  vector space  with respect  to the  standard scalar
+product <M>(.,.)</M> with respect to that basis we can identify <M>V</M>
+and <M>V^\vee</M> via this bilinear form. Then a given root <M>r</M> and
+eigenvalue <M>\zeta</M> determine a unique reflection <M>s</M> such that
+<M>(x,y)  = (xs,ys)</M>  for all  <M>x, y  \in V</M>.  The corresponding
+coroot is <M>r^\vee = (1 - \zeta) r' / (r,r)</M> and <M>s: x \mapsto x -
+(x,r^\vee) r</M>, where <M>r'</M> is  the complex conjugate of <M>r</M>.
+<P/>
+
+In the  &RefGrp; package we write  elements of <M>V</M> and  elements of
+<M>V^\vee</M> as  <Emph>row vectors</Emph>  (because column  vectors are
+cumbersome to type  and less efficient for computations).  If we specify
+roots  and corresponding  coroots we  assume that  these are  given with
+repect to  dual bases  of <M>V</M>  and <M>V^\vee</M>.  So, if  <M>x \in
+V</M> and <M>y  \in V^\vee</M> are stored in &GAP;  row vectors <C>x</C>
+and <C>y</C> we can compute <M>y(x)</M> in &GAP; by <C>y * x</C>.
+
+</Subsection>
+
+
+<Subsection Label="ss:SpecEigenValRefl">
+<Heading>Specifying Eigenvalues of Reflections</Heading>
+
+Since a reflection has finite order its unique non-trivial eigenvalue is
+a root  of unity. In  functions of this  package we usually  allow three
+methods to specify such an eigenvalue.<P/>
+
+<List >
+<Mark>as    cyclotomic    number</Mark><Item>direct   input    of    the
+eigenvalue</Item>
+<Mark>as natural number <C>n</C></Mark><Item>interpreted as <C>E(n)</C>, 
+then <C>n</C> is the order of the reflection</Item>
+<Mark>as    rational   number    <C>r/s</C></Mark><Item>interpreted   as
+<C>E(s)^r</C></Item>
+</List><P/>
+
+For  example,  <C>E(3)</C>  can  also  be  described  by  <C>1/3</C>  or
+<C>3</C>.
+
+</Subsection>
+
+<#Include Label="DistinguishedCoroot">
+
+<#Include Label="ReflectionMatrix">
+
+<#Include Label="ReflectionGroupByRoots">
+
+</Section>
+
+<Section Label="sec:GenRootFunc">
+<Heading>General Functions for Groups with Generating Roots</Heading>
+
+<#Include Label="CanGeneratingRoots">
+
+<#Include Label="GeneratingRoots">
+
+<#Include Label="EigenvaluesGeneratingReflections">
+
+<#Include Label="LieRanks">
+
+<#Include Label="CartanMatrixAttr">
+</Section>
+
+
+
+
+<Section Label="sec:IsPermRoot">
+<Heading>Reflection Groups Permuting Roots</Heading>
+
+<#Include Label="ReflectionGroupPermutingRoots">
+</Section>
+
+<Section Label="sec:RootSystem">
+<Heading>Root Systems and Simple Roots</Heading>
+
+</Section>
+
+</Chapter>
+

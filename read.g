@@ -6,3 +6,4 @@
 
 ReadPackage( "ReflectionGroups", "lib/Utils.gi");
 ReadPackage( "ReflectionGroups", "lib/GenRefl.gi");
+ReadPackage( "ReflectionGroups", "lib/GenRoot.gi");
