@@ -1,0 +1,28 @@
+<Chapter Label="ch:Utils">
+<Heading>Utilities from the &RefGrp; Package</Heading>
+
+The utilities described here are used  in the &RefGrp; package, but some
+of them may be of more general interest.
+
+<Section Label="sec:UtilOrb">
+<Heading>Functions to Compute Orbits</Heading>
+
+<#Include Label="FullOrbits">
+
+<#Include Label="OrbitsAndWordsPerms">
+
+</Section>
+<Section Label="sec:SEUtil">
+<Heading>Linearly Independent Vectors</Heading>
+
+<#Include Label="SEBasis">
+
+<#Include Label="LinearlyIndependentRows">
+
+<#Include Label="RightInverseMatrix">
+
+</Section>
+
+</Chapter>
+
+

@@ -16,11 +16,11 @@
 ##  <ManSection >
 ##  <Filt Name="CanGeneratingReflections" Arg="W" />
 ##  <Description>
-##  This    is    a    basic     filter    in    the    &RefGrp;    package.
-##  It    returns    <K>true</K>   if    <A>W</A>    is    a   group    with
-##  attribute    <Ref   Attr="GeneratingReflections"/>    and   <K>false</K>
-##  otherwise.   There    are   several    other   filters    in   &RefGrp;,
-##  e.g.,    <Ref    Filt="CanCoxeterGenerators"/>,   which    imply    <Ref
+##  This   is    a   basic    filter   in    the   &RefGrp;    package.   It
+##  returns   <K>true</K>   if   <A>W</A>   is  a   group   on   which   the
+##  attribute   <Ref  Attr="GeneratingReflections"/>   can  be   called  and
+##  <K>false</K>   otherwise.   There   are   several   other   filters   in
+##  &RefGrp;,  e.g., <Ref  Filt="CanCoxeterGenerators"/>,  which imply  <Ref
 ##  Filt="CanGeneratingReflections"/>. <P/>
 ##  
 ##  Note that a  group in <Ref Filt="CanGeneratingReflections"/>  can be any
